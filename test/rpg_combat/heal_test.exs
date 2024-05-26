@@ -6,8 +6,8 @@ defmodule RpgCombat.HealTest do
 
   describe "heal/3" do
     test "dead characters should not be healed" do
-      healer = Character.new()
-      target = Character.new(health: 0)
+      healer = Character.new(health: 0)
+      target = healer
 
       target = Heal.heal(healer, target, 50)
       assert target.health == 0
@@ -16,18 +16,26 @@ defmodule RpgCombat.HealTest do
 
     test "healing cannot raise health above 1000" do
       healer = Character.new()
-      target = Character.new()
+      target = healer
 
       target = Heal.heal(healer, target, 5_000)
       assert target.health == 1_000
     end
 
     test "should heal a damaged character" do
+      healer = Character.new(health: 200)
+      target = healer
+
+      target = Heal.heal(healer, target, 50)
+      assert target.health == 250
+    end
+
+    test "a character cannot heal another character" do
       healer = Character.new()
       target = Character.new(health: 200)
 
       target = Heal.heal(healer, target, 50)
-      assert target.health == 250
+      assert target.health == 200
     end
   end
 end
