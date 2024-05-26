@@ -1,6 +1,7 @@
 defmodule RpgCombat.DamageTest do
   use ExUnit.Case, async: true
 
+  alias RpgCombat.Attack
   alias RpgCombat.Character
   alias RpgCombat.Damage
 
@@ -9,7 +10,7 @@ defmodule RpgCombat.DamageTest do
       attacker = Character.new()
       target = Character.new()
 
-      target = Damage.deal_damage(attacker, target, 50)
+      target = Damage.deal_damage(attacker, target, %Attack{points: 50})
       assert target.health == 950
     end
 
@@ -17,7 +18,7 @@ defmodule RpgCombat.DamageTest do
       attacker = Character.new()
       target = Character.new()
 
-      target = Damage.deal_damage(attacker, target, 5_000)
+      target = Damage.deal_damage(attacker, target, %Attack{points: 5_000})
       assert Character.dead?(target)
       assert target.health == 0
     end
@@ -26,7 +27,7 @@ defmodule RpgCombat.DamageTest do
       attacker = Character.new()
       target = attacker
 
-      target = Damage.deal_damage(attacker, target, 50)
+      target = Damage.deal_damage(attacker, target, %Attack{points: 50})
       assert target.health == 1_000
     end
 
@@ -34,7 +35,7 @@ defmodule RpgCombat.DamageTest do
       attacker = Character.new()
       target = Character.new(level: 7)
 
-      target = Damage.deal_damage(attacker, target, 100)
+      target = Damage.deal_damage(attacker, target, %Attack{points: 100})
       assert target.health == 950
     end
 
@@ -42,8 +43,24 @@ defmodule RpgCombat.DamageTest do
       attacker = Character.new(level: 7)
       target = Character.new()
 
-      target = Damage.deal_damage(attacker, target, 100)
+      target = Damage.deal_damage(attacker, target, %Attack{points: 100})
       assert target.health == 850
+    end
+
+    test "attack from a melee character out of range should not affect" do
+      attacker = Character.new(type: :melee)
+      target = Character.new()
+
+      target = Damage.deal_damage(attacker, target, %Attack{points: 100, distance: 10})
+      assert target.health == 1_000
+    end
+
+    test "attack from a ranger character out of range should not affect" do
+      attacker = Character.new(type: :ranger)
+      target = Character.new()
+
+      target = Damage.deal_damage(attacker, target, %Attack{points: 100, distance: 100})
+      assert target.health == 1_000
     end
   end
 end

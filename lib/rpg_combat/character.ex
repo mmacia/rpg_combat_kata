@@ -5,16 +5,24 @@ defmodule RpgCombat.Character do
 
   alias UUID
 
-  defstruct id: "",
+  @max_ranges %{
+    melee: 2,
+    ranger: 20
+  }
+
+  defstruct id: nil,
             health: 1_000,
             level: 1,
-            alive: true
+            alive: true,
+            max_range: 2,
+            type: :melee
 
   def new(opts \\ []) do
     %__MODULE__{}
     |> Map.put(:id, UUID.uuid4())
     |> maybe_update_health(opts)
     |> maybe_update_level(opts)
+    |> maybe_update_type(opts)
   end
 
   def alive?(character), do: character.alive
@@ -32,5 +40,17 @@ defmodule RpgCombat.Character do
     level = Keyword.get(opts, :level)
 
     if level, do: %{character | level: level}, else: character
+  end
+
+  defp maybe_update_type(character, opts) do
+    type = Keyword.get(opts, :type)
+
+    if type do
+      max_range = @max_ranges[type]
+
+      %{character | type: type, max_range: max_range}
+    else
+      character
+    end
   end
 end

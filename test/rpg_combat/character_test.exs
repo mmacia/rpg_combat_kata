@@ -19,4 +19,16 @@ defmodule RpgCombat.CharacterTest do
       assert Character.alive?(subject)
     end
   end
+
+  describe "max_range/0" do
+    test "melee fighters have a range of 2" do
+      subject = Character.new(type: :melee)
+      assert subject.max_range == 2
+    end
+
+    test "ranger fighters have a range of 20" do
+      subject = Character.new(type: :ranger)
+      assert subject.max_range == 20
+    end
+  end
 end
