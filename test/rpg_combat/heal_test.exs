@@ -3,6 +3,7 @@ defmodule RpgCombat.HealTest do
 
   alias RpgCombat.Character
   alias RpgCombat.Heal
+  alias RpgCombat.Thing
 
   describe "heal/3" do
     test "dead characters should not be healed" do
@@ -49,6 +50,14 @@ defmodule RpgCombat.HealTest do
 
       target = Heal.heal(healer, target, 50)
       assert target.health == 250
+    end
+
+    test "a thing could not be healed" do
+      healer = Character.new()
+      target = Thing.new(health: 50)
+
+      subject = Heal.heal(healer, target, 50)
+      assert subject.health == 50
     end
   end
 end

@@ -3,15 +3,17 @@ defmodule RpgCombat.Heal do
   Defines how to heal characters.
   """
   alias RpgCombat.Character
+  alias RpgCombat.Thing
 
-  def heal(_healer, %{alive: false} = target, _value), do: target
-  def heal(_healer, %{health: 1_000} = target, _value), do: target
+  def heal(_healer, %Thing{} = target, _value), do: target
+  def heal(_healer, %Character{alive: false} = target, _value), do: target
+  def heal(_healer, %Character{health: 1_000} = target, _value), do: target
 
-  def heal(%{id: healer_id} = healer, %{id: target_id} = target, value)
+  def heal(%Character{id: healer_id} = healer, %Character{id: target_id} = target, value)
       when healer_id == target_id,
       do: do_heal(healer, target, value)
 
-  def heal(healer, target, value) do
+  def heal(%Character{} = healer, %Character{} = target, value) do
     if Character.allies?(healer, target) do
       do_heal(healer, target, value)
     else

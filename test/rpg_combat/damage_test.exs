@@ -4,6 +4,8 @@ defmodule RpgCombat.DamageTest do
   alias RpgCombat.Attack
   alias RpgCombat.Character
   alias RpgCombat.Damage
+  alias RpgCombat.Damage.InvalidAttack
+  alias RpgCombat.Thing
 
   describe "deal_damage/3" do
     test "should substract damage from health" do
@@ -74,6 +76,32 @@ defmodule RpgCombat.DamageTest do
 
       subject = Damage.deal_damage(attacker, target, %Attack{points: 100})
       assert subject.health == 1_000
+    end
+
+    test "a thing may be a target" do
+      attacker = Character.new()
+      tree = Thing.new()
+
+      subject = Damage.deal_damage(attacker, tree, %Attack{points: 50})
+      assert subject.health == 50
+    end
+
+    test "a thing could not deal damage" do
+      attacker = Thing.new()
+      target = Character.new()
+
+      assert_raise InvalidAttack, fn ->
+        Damage.deal_damage(attacker, target, %Attack{points: 50})
+      end
+    end
+
+    test "when a thing reaches 0 health sould be destroyed" do
+      attacker = Character.new()
+      tree = Thing.new(health: 2_000)
+
+      subject = Damage.deal_damage(attacker, tree, %Attack{points: 5_000})
+      assert subject.health == 0
+      assert Thing.destroyed?(subject)
     end
   end
 end
