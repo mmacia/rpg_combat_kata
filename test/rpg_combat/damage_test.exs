@@ -62,5 +62,18 @@ defmodule RpgCombat.DamageTest do
       target = Damage.deal_damage(attacker, target, %Attack{points: 100, distance: 100})
       assert target.health == 1_000
     end
+
+    test "allied characters cannot harm each other" do
+      attacker =
+        Character.new()
+        |> Character.join_faction(:faction1)
+
+      target =
+        Character.new()
+        |> Character.join_faction(:faction1)
+
+      subject = Damage.deal_damage(attacker, target, %Attack{points: 100})
+      assert subject.health == 1_000
+    end
   end
 end

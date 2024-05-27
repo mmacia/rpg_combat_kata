@@ -37,5 +37,18 @@ defmodule RpgCombat.HealTest do
       target = Heal.heal(healer, target, 50)
       assert target.health == 200
     end
+
+    test "allied characters could heal each other" do
+      healer =
+        Character.new()
+        |> Character.join_faction(:faction1)
+
+      target =
+        Character.new(health: 200)
+        |> Character.join_faction(:faction1)
+
+      target = Heal.heal(healer, target, 50)
+      assert target.health == 250
+    end
   end
 end

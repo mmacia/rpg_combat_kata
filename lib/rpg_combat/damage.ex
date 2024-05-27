@@ -2,6 +2,7 @@ defmodule RpgCombat.Damage do
   @moduledoc """
   Inflict damage from one character to another.
   """
+  alias RpgCombat.Character
 
   def deal_damage(%{id: attacker_id}, %{id: target_id} = target, _attack)
       when attacker_id == target_id,
@@ -23,10 +24,14 @@ defmodule RpgCombat.Damage do
        when distance > max_range,
        do: target
 
-  defp do_deal_damage(_attacker, target, %{points: points}) do
-    new_health = max(0, target.health - points)
-    is_alive = new_health != 0
+  defp do_deal_damage(attacker, target, %{points: points}) do
+    if Character.allies?(attacker, target) do
+      target
+    else
+      new_health = max(0, target.health - points)
+      is_alive = new_health != 0
 
-    %{target | health: new_health, alive: is_alive}
+      %{target | health: new_health, alive: is_alive}
+    end
   end
 end

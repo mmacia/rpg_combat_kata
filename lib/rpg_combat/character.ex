@@ -15,7 +15,8 @@ defmodule RpgCombat.Character do
             level: 1,
             alive: true,
             max_range: 2,
-            type: :melee
+            type: :melee,
+            factions: MapSet.new()
 
   def new(opts \\ []) do
     %__MODULE__{}
@@ -28,6 +29,22 @@ defmodule RpgCombat.Character do
   def alive?(character), do: character.alive
 
   def dead?(character), do: !character.alive
+
+  def join_faction(character, faction) do
+    %{character | factions: MapSet.put(character.factions, faction)}
+  end
+
+  def leave_faction(character, faction) do
+    %{character | factions: MapSet.delete(character.factions, faction)}
+  end
+
+  def allies?(character1, character2) do
+    common =
+      MapSet.intersection(character1.factions, character2.factions)
+      |> MapSet.size()
+
+    common > 0
+  end
 
   defp maybe_update_health(character, opts) do
     health = Keyword.get(opts, :health)
